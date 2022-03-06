@@ -5,4 +5,4 @@
 - O jogo deve ser desenvolvido ao longo de 9 semanas, respeitando os requisitos semanais de desenvolvimento. 
 
 - Links úteis: 
-  - [Zombie Dice rules] (https://en.wikipedia.org/wiki/Zombie_Dice)
+  - Link [Zombie Dice rules] (https://en.wikipedia.org/wiki/Zombie_Dice)
