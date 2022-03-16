@@ -6,10 +6,6 @@ import random  # generates random numbers or letters
 import time  # for small pauses between rounds and text
 
 # define variables that will be used
-rounds = 0
-brains = 0
-hearts = 3
-steps = 0
 B = 'brain'
 G = 'gunshot'
 S = 'steps'
@@ -24,7 +20,7 @@ GreenDice = 'BSBGSB'
 YellowDice = 'GSBGSB'
 RedDice = 'GSGBSG'
 
-# defines the list of dice to be sorted from the cup/tube
+# defines the list of dice to be sorted from the dice holder
 cup = ['GreenDice', 'GreenDice', 'GreenDice', 'GreenDice', 'GreenDice', 'GreenDice', 'YellowDice', 'YellowDice',
        'YellowDice', 'YellowDice', 'RedDice', 'RedDice', 'RedDice']
 
@@ -58,52 +54,68 @@ else:
 print("STARTING GAME...")
 time.sleep(1)
 
-roundPlayer = players[0]
+# variables during the round:
+diceChoice = []
+currentPlayer = 0
+brains = 0
+hearts = 3
+steps = 0
+# roundPlayer = players[0]
 
-print("It's your turn", roundPlayer)
-time.sleep(1)
-
-# randomly selects 3 dice from the dice holder
-diceChoice = random.sample(cup, 3)
-print("Your dice are:", diceChoice)
-time.sleep(1)
-
-#
-for c in diceChoice:
-    if c == 'GreenDice':
-        side = random.choice('BSBGSB')
-    elif c == 'YellowDice':
-        side = random.choice('GSBGSB')
-    elif c == 'RedDice':
-        side = random.choice('GSGBSG')
-
-    print("Your sides are:", side)
+while True:
+    print("It's your turn", {players[currentPlayer]})
     time.sleep(1)
 
-    while side == 'B':
-        brains = brains + 1
+    # randomly selects 3 dice from the dice holder
+    diceChoice = random.sample(cup, 3)
+    print("Your dice are:", dice Choice)
+    time.sleep(1)
+
+    # identifies the items in the list and defines what to do w/ them
+    for c in diceChoice:
+        if c == 'GreenDice':
+            side = random.choice('BSBGSB')
+        elif c == 'YellowDice':
+            side = random.choice('GSBGSB')
+        elif c == 'RedDice':
+            side = random.choice('GSGBSG')
+
+# prints the selected sides for the players
+        print("Your sides are:", side)
+        time.sleep(1)
+
+# counts the players' points
+        while side == 'B':
+            brains = brains + 1
+            break
+        while side == 'G':
+            hearts = hearts - 1
+            break
+        while side == 'S':
+            steps = steps + 1
+            break
+
+# prints what happened in the current round
+    print("You've eaten:", brains, "brains!")
+    time.sleep(1)
+
+    print(steps, "of your victims ran away...")
+    time.sleep(1)
+
+    print("You still have", hearts, "hearts!")
+    time.sleep(1)
+
+    keepPlay = input("Do you want to keep playing? [y/n]")
+    while keepPlay == 'n':
+    # prints the players' score in case they don't keep playing the current round
+        print("SCORE:")
+        time.sleep(1)
+
+        print("BRAINS -----", brains)
+        time.sleep(1)
+
+        print("HEARTS -----", hearts)
+        time.sleep(1)
+
         break
-    while side == 'G':
-        hearts = hearts - 1
-        break
-    while side == 'S':
-        steps = steps + 1
-        break
-
-print("You've eaten:", brains, "brains!")
-time.sleep(1)
-
-print(steps, "of your victims ran away...")
-time.sleep(1)
-
-print("You still have", hearts, "hearts!")
-time.sleep(1)
-
-print("ROUND 1 SCORE:")
-time.sleep(1)
-
-print("BRAINS:", brains)
-time.sleep(1)
-
-print("HEARTS:", hearts)
-time.sleep(1)
+    break
