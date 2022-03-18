@@ -12,7 +12,6 @@ S = 'steps'
 
 # defines the lists to be filled
 players = []
-diceChoice = []
 side = []
 
 # defines the sides of each dice
@@ -25,7 +24,7 @@ cup = ['GreenDice', 'GreenDice', 'GreenDice', 'GreenDice', 'GreenDice', 'GreenDi
        'YellowDice', 'YellowDice', 'RedDice', 'RedDice', 'RedDice']
 
 # greetings for the players
-print("WELCOME, ZOMBIES! ARE YOU READY FOR THE MOST THRILLING ADVENTURE OF ALL?")  # shows this message
+print("WELCOME TO ZOMBIE DICE!!! ARE YOU READY FOR THE MOST THRILLING ADVENTURE OF ALL?")  # shows this message
 time.sleep(1)  # waits 1 sec for the next message
 
 # creates variable for number of players
@@ -68,7 +67,7 @@ while True:
 
     # randomly selects 3 dice from the dice holder
     diceChoice = random.sample(cup, 3)
-    print("Your dice are:", dice Choice)
+    print("Your dice are:", diceChoice)
     time.sleep(1)
 
     # identifies the items in the list and defines what to do w/ them
@@ -106,9 +105,9 @@ while True:
     time.sleep(1)
 
     keepPlay = input("Do you want to keep playing? [y/n]")
-    while keepPlay == 'n':
-    # prints the players' score in case they don't keep playing the current round
-        print("SCORE:")
+    while keepPlay == 'n' or 'N':
+        # prints the players' score in case they don't keep playing the current round
+        print({players[currentPlayer]}, "SCORE:")
         time.sleep(1)
 
         print("BRAINS -----", brains)
@@ -118,4 +117,14 @@ while True:
         time.sleep(1)
 
         break
+
+    # game continues on to the next player but doesn't start their round
+    diceChoice = []
+    currentPlayer = currentPlayer + 1
+    brains = 0
+    hearts = 3
+    steps = 0
+
+    print("It's your turn, ", {players[currentPlayer]}, "!")
+
     break
