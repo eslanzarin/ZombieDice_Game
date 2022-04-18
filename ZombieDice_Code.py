@@ -1,131 +1,165 @@
-# Project developed by Emily Suzan Lanzarin in 2022 for the Análise e Desenvolvimento de Sistemas course
-# Please, read "README" file for rules on how to play and extra details about the project
+"""
+Project developed by Emily Suzan Lanzarin in 2022 for the Análise e Desenvolvimento de Sistemas course
+Please, read "README" file for rules on how to play and extra details about the project
+"""
 
-# import libraries
-import random  # generates random numbers or letters
-import time  # for small pauses between rounds and text
+# Import libraries
+from random import shuffle, choice
+from collections import namedtuple
+import time
 
-# define variables that will be used
-B = 'brain'
-G = 'gunshot'
-S = 'steps'
 
-# defines the lists to be filled
-players = []
-side = []
+def menu():
+    """
+    Function will explain the rules of the game before it begins
+    :return: Nothing
+    """
+    print("\t**** WELCOME TO ZOMBIE DICE ****\n")
+    print(f"\tHOW TO PLAY:")
+    print(f"\tAT EACH ROUND, EACH PLAYER WILL THROW 3 DICE FROM THE CUP.")
+    print(f"\tTO WIN, YOU'VE GOT TO HAVE 13 EATEN BRAINS IN YOUR SCORE!")
+    print(f"\tBUT BE CAREFUL! IF YOU GET 3 GUNSHOTS IN A ROUND, YOU'LL LOSE ALL YOUR EATEN BRAINS!!!\n")
 
-# defines the sides of each dice
-GreenDice = ('BSBGSB',)
-YellowDice = ('GSBGSB',)
-RedDice = ('GSGBSG',)
 
-# defines the list of dice to be sorted from the dice holder
-cup = ('GreenDice', 'GreenDice', 'GreenDice', 'GreenDice', 'GreenDice', 'GreenDice', 'YellowDice', 'YellowDice',
-       'YellowDice', 'YellowDice', 'RedDice', 'RedDice', 'RedDice')
-
-rounds = 0
-
-# greetings for the players
-print("WELCOME TO ZOMBIE DICE!!!")
+print(f'ARE YOU READY FOR THE MOST THRILLING ADVENTURE OF ALL?\n')
 time.sleep(1)
+start = menu()
 
-print("ARE YOU READY FOR THE MOST THRILLING ADVENTURE OF ALL?")
-time.sleep(1)  # waits 1 sec for the next message
 
-# creates variable for number of players
-nPlayers = int(input("How many zombies will be joining us today?"))
+def add_players():
+    """
+    Function to check and validate the numbers of players for the game to start
+    :return: variable containing the list with names/scores for each player
+    """
+    players = []
 
-# conditions for the game to start
-if nPlayers < 2:
-    print("We need at least 2 players to continue!")
-
-elif nPlayers > 8:
-    print("Sorry, too many zombies in this game! We accept up to 8 players:")
-
-# nPlayers >= 2 or nPlayers <= 8
-else:
-    print("Alright! Let's meet our players!")
-    time.sleep(1)
-
-    for i in range(nPlayers):
-        # identify and store the name of the players inside the list 'players'
-        name = str(input("Please, type the name of the zombies:"))
-        players.append(name)
-
-print("STARTING GAME...")
-time.sleep(1)
-
-i = 0
-rounds = 1
-brains = 0
-steps = 0
-hearts = 3
-
-while True:
-    for j in range(0, nPlayers):
-        print("It's your turn,", players[i])
-        time.sleep(1)
-
-        # randomly selects 3 dice from the dice holder
-        diceChoice = random.sample(cup, 3)
-        print("Your dice are:", diceChoice)
-        time.sleep(1)
-
-        # identifies the items in the list and defines what to do w/ them
-        for c in diceChoice:
-            if c == 'GreenDice':
-                side = random.choice('BSBGSB')
-            elif c == 'YellowDice':
-                side = random.choice('GSBGSB')
-            elif c == 'RedDice':
-                side = random.choice('GSGBSG')
-
-# prints the selected sides for the players
-            print("Your sides are:", side)
-            time.sleep(1)
-
-# counts the players' points
-            while side == 'B':
-                brains = brains + 1
+    # Check the condition for the game to start (players > 2)
+    while True:
+        try:
+            n_players = int(input(f"\tTYPE THE NUMBER OF PLAYERS: "))
+            time.sleep(0.5)
+            if n_players > 1:
                 break
-            while side == 'G':
-                hearts = hearts - 1
+            else:
+                print(f"\tYOU NEED AT LEAST 2 PLAYERS TO PLAY!")
+                time.sleep(0.5)
+        except ValueError:
+            print(f"\tTYPE AN INTEGER NUMBER!")
+            time.sleep(0.5)
+
+    # Store the name of the players in a list
+    for i in range(n_players):
+        name = input(f"\tTYPE ZOMBIE'S {i+1} NAME: ").upper()
+        time.sleep(0.5)
+        player = {'name': name, 'score': 0}
+        players.append(player)
+
+    return players
+
+
+def create_dice():
+    """
+    Creates the dice list and each side
+    :return: variable containing the dice list
+    """
+    # named tuple for each die color
+    Die = namedtuple("Die", ['color', 'side'])
+    green_die = Die('green', ['brain', 'brain', 'brain', 'step', 'step', 'gunshot'])
+    red_die = Die('red', ['brain', 'step', 'step', 'gunshot', 'gunshot', 'gunshot'])
+    yellow_die = Die('yellow', ['brain', 'brain', 'step', 'step', 'gunshot', 'gunshot'])
+
+    # Add each tuple in a specified list that can be modified
+    dice_list = []
+    for _ in range(6):
+        dice_list.append(green_die)
+    for _ in range(3):
+        dice_list.append(red_die)
+    for _ in range(4):
+        dice_list.append(yellow_die)
+
+    shuffle(dice_list)
+    return dice_list
+
+
+def turn(player):
+    """
+    Creates a variable for the score, which has points for brains and gunshots (added at each round for each player).
+    Creates a variable for removing dice from the list at each round to count as the dice being held in the players
+    hand
+    :param player: variable to call
+    :return: Nothing
+    """
+    print(f"\n\tIT'S PLAYER {player['name']}'S TURN!")
+    time.sleep(0.5)
+
+    dice_list = create_dice()
+    score_turn = {'brains': 0, 'hearts': 3, 'steps': 0}
+    holding_dice = []
+
+    while True:
+        while len(holding_dice) < 3:
+            holding_dice.append(dice_list.pop())
+
+        n = 1
+
+        for die in reversed(holding_dice):
+            time.sleep(0.5)
+            print(f"\tTHROWING DICE {n}")
+            n += 1
+
+            color = die.color
+            shuffle(die.side)
+            sorted_side = choice(die.side)
+
+            print(f"\tCOLOR: {color}\n\tSIDE: {sorted_side}\n")
+
+            if sorted_side == 'brain':
+                score_turn['brains'] += 1
+                dice_list.append(holding_dice.pop(holding_dice.index(die)))
+            elif sorted_side == 'gunshot':
+                score_turn['hearts'] -= 1
+                dice_list.append(holding_dice.pop(holding_dice.index(die)))
+            elif sorted_side == 'step':
+                score_turn['steps'] += 1
+                dice_list.append(holding_dice.pop(holding_dice.index(die)))
+            shuffle(dice_list)
+
+        print(f"\t**** SCORE ****")
+        print(f"\n\tBRAINS: {score_turn['brains']}\n\tHEARTS: {score_turn['hearts']}\n\tSTEPS: {score_turn['steps']}")
+        if score_turn['hearts'] > 0 and score_turn['steps'] > 0:
+            if input("\n\tWould you like to keep playing? (y/n): ").upper() != 'Y':
+                print(f"\n\tYou've got {score_turn['brains']} brains.")
+                player['score'] += score_turn['brains']
                 break
-            while side == 'S':
-                steps = steps + 1
-                break
-
-# prints what happened in the current round
-        print("You've eaten", brains, "brains!")
-        time.sleep(1)
-
-        print(steps, "of your victims ran away...")
-        time.sleep(1)
-
-        print("You still have", hearts, "hearts!")
-        time.sleep(1)
-
-        keepPlay = input("Do you want to keep playing? [y/n]")
-        while keepPlay == 'n' or 'N':
-            # prints the players' score in case they don't keep playing the current round
-            print(players[i], "SCORE:")
-            time.sleep(1)
-
-            print("BRAINS -----", brains)
-            time.sleep(1)
-
-            print("HEARTS -----", hearts)
-            time.sleep(1)
-
+        else:
+            print(f"\n\tYou've got shot many times and lost all of your hearts! Next player...")
             break
 
-    # game continues on to the next player but doesn't start their round
-    # diceChoice = []
-    # currentPlayer = currentPlayer + 1
-    # brains = 0
-    # hearts = 3
-    # steps = 0
 
-        i = i+1
+def score_points(players):
+    """
+    Function will score the points for each player in the game
+    :param players: variable to call
+    :return: Nothing
+    """
+    print("\n\t*** ROUND SCORE ***")
+    for player in players:
+        print(f"\n\t{player['name']}: {player['score']} points")
 
-    break
+
+players = add_players()
+
+
+# Defining the conditions for the game to be over
+game_over = False
+while not game_over:
+    for player in players:
+        turn(player)
+        if player['score'] >= 13:
+            winner = player['name']
+            game_over = True
+    if not game_over:
+        score_points(players)
+    else:
+        print(f"\n\tTHE WINNER IS: {winner}.")
+        score_points(players)
